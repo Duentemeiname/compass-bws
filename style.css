@@ -1,0 +1,831 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap');
+body{
+    margin: 0px;
+    padding: 0px;
+    background-color: #e9f0f3;
+}
+
+h1, h2, h3, h4, h5{
+    color: #133e5e;
+    font-family: 'Open Sans', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: 0%;
+    padding-top: 0%;
+    margin-top: 0%;
+}
+
+h2{
+    font-size: 35px;
+}
+
+p, ol, ul{
+    color: #133e5e;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 20px;
+}
+
+label{
+    color: #133e5e;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 125%;
+}
+
+input{
+    color: #133e5e;
+    font-family: 'Open Sans', sans-serif;
+    width: 80%;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 3px solid #133e5e;
+    font-size: 125%;
+    
+}
+
+hr{
+    border: 1px solid #133e5e;
+}
+
+select{
+    color: #133e5e;
+    font-family: 'Open Sans', sans-serif;
+    width: 20%;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 3px solid #133e5e;
+    font-size: 125%;
+    background-color: white;
+}
+table, th, td {
+    border: 1px solid;
+    margin: 0 auto;
+    width: 80%;
+}
+
+details summary::-webkit-details-marker,
+details summary::before {
+  display: none;
+}
+
+  
+
+.center{
+    text-align: center;
+}
+
+.break{
+    display: none;
+}
+
+.navbar {
+    background-color: #94b0cc;
+    color: #fff;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 15%;
+    text-align: center;
+    justify-content: center;
+    height: 100%;
+    float: left;
+  }
+  
+  
+  .menu_lehrende {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .menu_lehrende li {
+    margin-bottom: 10px;
+    border: 2px solid #133e5e;
+    font-size: 25px;
+    margin: 20px;
+    padding-top: 5%;
+    padding-bottom: 5%;
+    padding-left: 1%;
+    padding-right: 1%;
+  }
+  
+  .menu_lehrende a {
+    text-decoration: none;
+    color: #fff;
+  }
+  
+  .body_lehrende{
+    background-color: #e9f0f3;
+    height: 100%;
+    width: 85%;
+    float: right;
+  }
+
+  .kurzuebersicht{
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    margin-top: 1%;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .icon_row1{
+    background-color: white;
+    width: 15%;
+    padding: 2%;
+    border-radius: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 3%;
+  }
+
+.header{
+    display: flex;
+    height: 80px;
+    background-color: #133e5e;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.center_p{
+    padding-top: 2%;
+    text-align: center;
+    font-size: 200%;
+}
+
+.header_schrift{
+    color: white;
+    font-size: 25px;
+    font-weight: 700;
+    font-family: 'Open Sans', sans-serif;
+    text-decoration: none;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.button_loginstatus, .button_antragsstatus, .button_reset_suche{
+    background-color: #94b0cc;
+    border: 1px solid white;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 3ch;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    margin-left: 1%;
+}
+.button_loginstatus{
+    margin-left: 1%;
+}
+
+.button_loginstatus:hover, .button_antragsstatus:hover, .button_reset_suche:hover{
+    background-color: white;
+    border: 1px solid white;
+    color: #94b0cc;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.button_reset_suche{
+    width: 50%;
+    background-color: #e9f0f3;
+    border: 1px solid #133e5e;
+    color:#133e5e;
+}
+
+.center_suche{
+    margin-top: 1%;
+    margin-left: 35%;
+}
+
+.menu{
+    display: flex;
+    background-color: #94b0cc;
+    align-items: center;
+    justify-content: right;
+    padding-right: 20%;
+}
+
+.header_schrift:hover{
+    color: white;
+    font-size: 25px;
+    font-weight: 700;
+    font-family: 'Open Sans', sans-serif;
+    text-decoration: underline;
+    margin-top: 1%;
+    margin-bottom: 1%;
+}
+
+.background{
+    background-color: #e9f0f3;
+    height: auto;
+    margin-top: 0px;
+    height: 100%;
+}
+.seiteninhalt{
+    margin-left: 20%;
+    margin-right: 20%;
+    margin-top: 0%;
+    
+}
+
+.header_willkommen{
+    text-align: center;
+    margin: 0%;
+    padding-top: 3%;
+    font-weight:900;
+    font-size: 300%;
+}
+
+
+.header_antrage{
+    padding-top: 5%;
+    font-family: 'Open Sans', sans-serif;
+    text-align: center;
+    font-size: 250%;
+}
+
+.header_lehrende, .header_suche{
+    padding-top: 1%;
+    font-family: 'Open Sans', sans-serif;
+    text-align: center;
+    font-size: 250%;
+}
+
+.header_suche{
+    padding-bottom: 0%;
+
+}
+
+.button, .button1, .button2{
+    background-color: white;
+    border: 3px solid white;
+    color: #133e5e;
+    padding: 2% 10%;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 150%;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 800;
+    margin-bottom: 10%;
+    margin-top: 5%;
+}
+
+.button:hover, .button1:hover, .button2:hover{
+    background-color:#e9f0f3;
+    border: 3px solid #133e5e;
+    color: #133e5e;
+    padding: 2% 10%;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 150%;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 800;
+
+}
+
+.button1{
+    margin-right: 2%;
+}
+
+.button2{
+    margin-left: 2%;
+}
+
+.button1:hover{
+    margin-right: 2%;
+}
+
+.button2:hover{
+    margin-left: 2%;
+}
+
+.button-div{
+    display: block;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    max-height: 100vh;
+    overflow-y: auto;
+}
+
+.antrag_formular{
+    height: 1000%;
+    background-color: white;
+    border-radius: 3%;
+    margin-left: 12%;
+    margin-right: 12%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #133e5e;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.formular{
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 10%;
+    justify-content: left;
+    align-items: left;
+    text-align: left;
+    height:1000%;
+}
+
+.datum{
+    color: #133e5e;
+    font-family: 'Open Sans', sans-serif;
+    width: 20%;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 3px solid #133e5e;
+    font-size: 125%;
+    margin-right: 1%;
+}
+
+.grund {
+    box-sizing: border-box;
+    line-height: 1.2em;
+    font-size: 16px;
+    padding: 1em;
+    resize: none;
+}
+
+.anmerkung{
+    color: #133e5e;
+    font-family: 'Open Sans', sans-serif;
+    width: 80%;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 3px solid #133e5e;
+    font-size: 125%;
+    margin-right: 1%;
+}
+
+.unterschrift{
+    border: 3px solid #133e5e;
+    background-color: #D3D3D3;
+    width: 50%;
+    height: 30%;
+    margin-top: 2%;
+}
+
+.button_unterschrift{
+    background-color:#133e5e;
+    border: 0px;
+    color: white;
+    padding: 2% 0%;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 125%;
+    font-family: 'Open Sans', sans-serif;
+    width: 30%;
+
+}
+
+.abschicken, .abschicken_status{
+    background-color: #133e5e;
+    border:  3px solid #133e5e;
+    color: white;
+    padding: 2% 10%;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 150%;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 800;
+    margin-bottom: 10%;
+    margin-top: 5%;
+    width: 100%;
+}
+
+.abschicken:hover, .abschicken_status:hover{
+    background-color: white;
+    border: 3px solid #133e5e;
+    color: #133e5e;
+    padding: 2% 10%;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 150%;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 800;
+    margin-bottom: 10%;
+    margin-top: 5%;
+    width: 100%;
+}
+
+ .fehler, .status_fehler{
+    background-color: white;
+    border: 3px solid red;
+    color: red;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0% 10%;
+    display: inline-block;
+    font-size: 150%;
+    font-weight: 800;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    width: 60%;
+    margin-left: 10%;
+    margin-right: 10%;
+ }
+
+ .status_button, .beurlaubung_search_button{
+    background-color: #133e5e;
+    border:  3px solid #133e5e;
+    color: white;
+    padding: 1% 10%;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 150%;
+    font-family: 'Open Sans', sans-serif;
+    margin-bottom: 1%;
+    margin-top: 0%;
+    width: 70%;
+ }
+
+ .beurlaubung_search_button{
+    width: 50%;
+ }
+ 
+ .status_button:hover{
+    background-color: white;
+    color: #133e5e;
+ }
+
+ .status_input{
+    color: #133e5e;
+    font-family: 'Open Sans', sans-serif;
+    width: 70%;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 3px solid #133e5e;
+    font-size: 125%;
+    padding: 1%;
+ }
+ .status_infos, .login, .suche_form{
+    height: 1000%;
+    background-color: white;
+    border-radius: 1%;
+    margin-left: 12%;
+    margin-right: 12%;
+    margin-top: 1%;
+    margin-bottom: 20%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #133e5e;
+    font-family: 'Open Sans', sans-serif;
+    padding-top: 1%;
+ }
+
+ .suche_form{
+    margin-bottom: 1%;
+    padding-bottom: 1%0;
+    padding-bottom: 0%;
+}
+
+ .login{
+    margin-bottom: 1%;
+    padding-bottom: 1%;
+ }
+
+ .status_fehler{
+    background-color: white;
+    border: 3px solid red;
+    color: red;
+    text-align: center;
+    padding: 0% 10%;
+    display: inline-block;
+    font-size: 150%;
+    font-weight: 800;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    width: 60%;
+ }
+ .status_success{
+    background-color: white;
+    border: 3px solid green;
+    color: #133e5e;
+    text-align: center;
+    padding: 0% 10%;
+    display: inline-block;
+    font-size: 150%;
+    font-weight: 800;
+    margin-top: 0%;
+    width: 60%;
+
+ }
+.Tabelle {
+	border-collapse: collapse;
+    justify-content: center;
+	text-align: center;
+	table-layout: fixed;
+    font-size: 150%;
+    margin-bottom: 0%;
+    border: 1px solid #133e5e;
+    font-family: 'Open Sans', sans-serif;
+    color: #133e5e;
+    border-color: #133e5e;
+    overflow-x: auto;
+}
+
+.Tabelle td{
+    padding: 1%;
+}
+
+
+.abschicken_status{
+    width: 80%;
+    margin-top: 0%;
+}
+
+.abschicken_status:hover{
+    width: 80%;
+    margin-top: 0%;
+}
+
+.status_andereID{
+    background-color: #133e5e;
+    border:  3px solid #133e5e;
+    color: white;
+    padding: 1% 10%;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 150%;
+    font-family: 'Open Sans', sans-serif;
+    margin-bottom: 1%;
+    margin-top: 1%;
+    width: 80%;
+}
+
+.status_andereID:hover{
+    background-color: white;
+    color: #133e5e;
+
+}
+
+.reset_passwort{
+    background-color: #133e5e;
+    border:  3px solid #133e5e;
+    color: white;
+    padding: 1% 10%;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 100%;
+    font-family: 'Open Sans', sans-serif;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    width: 70%;
+}
+
+.reset_passwort:hover{
+    background-color: white;
+    color: #133e5e;
+}
+
+.suche_beurlaubung{
+    margin-left: 0%;
+    margin-right: 0%;
+    text-align: center;
+    justify-content: center;
+}
+
+.lehrende_beurlaubung_input{
+    width: 50%;
+}
+
+.details_beurlaubung{
+    margin-left: 20%;
+    margin-right: 20%;
+    align-items: center;
+}
+
+.menu_mobile{
+    display: none;
+}
+
+.logout_mobile{
+    display: none;
+}
+
+    /* Optimierung Mobilgeräte*/
+@media(max-width: 900px){
+
+    .login{
+        margin-left: 0%;
+        margin-right: 0%;
+    }
+
+    .status_input{
+        width: 80%;
+
+    }
+
+    .status_button{
+        width: 80%;
+    }
+
+    .reset_passwort{
+        width: 80%;
+    }
+
+    .seiteninhalt{
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+
+    .status_infos{
+        margin-left: 0%;
+        margin-right: 0%;
+    }
+
+    .header_willkommen{
+        font-size: 200%;
+    }
+
+    .header_antrage{
+        font-size: 166%;
+    }
+
+    .button, .button1, .button2{
+        background-color: white;
+        border: 0px;
+        color: #133e5e;
+        margin-bottom: 10%;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 150%;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 800;
+    }
+
+    .button1{
+        margin-right: 0%;
+    }
+
+    .button2{
+        margin-left: 0%;
+    }
+
+    .button-div
+    {
+        margin-bottom: 50%
+    }
+
+    .antrag_formular{
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+
+    .datum{
+        width: 80%;
+    }
+
+    .kuerzel{
+        width: 80%;
+    }
+    .unterschrift{
+        width: 100%;
+        height: 30%;
+    }
+
+    input{
+        width: 100%;
+    }
+
+    .grund{
+        width: 100%;
+    }
+
+    .navbar{
+        display: none;
+    }
+
+    .kurzuebersicht{
+        margin-top: 0%;
+        flex-direction: column;
+      }
+
+      
+    .body_lehrende{
+        width: 100%;
+      }
+
+    .icon_row1{
+        width: 90%;
+      }
+    
+    .menu{
+        display: none;
+      }
+
+    .dropbtn {
+        background-color: #94b0cc;
+        color: white;
+        padding: 16px;
+        font-size: 16px;
+        border: none;
+        width: 100%;
+    }
+    
+    .menu_mobile {
+        display: inline-block;
+        width: 100%;
+    }
+    
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #94b0cc;
+        min-width: 160px;
+    }
+    
+    .dropdown-content a {
+        color: white;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        font-family: 'Open Sans', sans-serif;
+    }
+    
+    .dropdown-content a:hover {background-color: #ddd;}
+
+    .menu_mobile:hover .dropdown-content {display: block;}
+    
+    .menu_mobile:hover .dropbtn {background-color: #94b0cc;}
+
+    .button_loginstatus{
+        display: none;
+    }
+
+
+    .lehrende_beurlaubung_input{
+        width: 80%;
+    }
+
+    .beurlaubung_search_button{
+        width: 80%;
+    }
+
+}
+@media(max-width: 1200px) and (min-width: 901px){
+
+    .navbar{
+        width: 20%;
+    }
+
+    .body_lehrende{
+        width: 80%;
+    }
+
+}
+
+@media(max-width: 1200px) {
+    .Tabelle {
+        border-collapse: collapse;
+        justify-content: center;
+        text-align: center;
+        table-layout: fixed;
+        font-size: 100%;
+        margin-bottom: 0%;
+        border: 1px solid #133e5e;
+        font-family: 'Open Sans', sans-serif;
+        color: #133e5e;
+        border-color: #133e5e;
+        overflow-x: auto;
+        max-width: 100%;
+        padding: 10px;
+    }
+    
+    .Tabelle th {
+        word-wrap: break-word;
+        white-space: nowrap;
+        font-size: 80%;
+        line-height: 1.5;
+        text-align: center;
+    }
+    
+    .Tabelle td {
+        word-wrap: break-word;
+        padding: 10px;
+    }
+    
+}

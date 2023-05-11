@@ -1,0 +1,24 @@
+//Variablen werden bei Login gesetzt
+
+
+$_SESSION ["user_logged_in"];
+
+$_SESSION["ID"];
+
+$_SESSION["Nachname"];
+
+$_SESSION["Vorname"];
+
+$_SESSION["Kuerzel"];
+
+$_SESSION["EMail"];
+
+$_SESSION["Passwort"];
+
+$_SESSION["Administrator"];
+
+$_SESSION["Tutor"];
+
+$_SESSION["SL"];
+
+$_SESSION["Name_voll"];

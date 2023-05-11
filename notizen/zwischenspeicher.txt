@@ -1,0 +1,122 @@
+$_SESSION["name_as"] = $_POST["name_antragsteller"];
+    $_SESSION["email_as"] = $_POST["email_antragsteller"];
+    $_SESSION["name_sus"] = $_POST["name_sus"];
+    $_SESSION["geb_sus"] = $_POST["geb_sus"];
+    $_SESSION["ort_sus"] = $_POST["ort__sus"];
+    $_SESSION["tel_sus"] = $_POST["tel_sus"];
+    $_SESSION["name_tutor"] = $_POST["tutor"];
+    $_SESSION["kuerzel_tutor"] = $_POST["kuerzel"];
+    $_SESSION["klasse_sus"] = $_POST["klasse_sus"];
+    $_SESSION["zeitraum_von"] = $_POST["date_von"];
+    $_SESSION["zeitraum_bis"] = $_POST["date_bis"];
+    $_SESSION["grund_as"] = $_POST["grund"];
+    $_SESSION["zeitstempel"] = $_POST["zeitstempel"];
+    $_SESSION["id"] = $_POST["ID"];
+    $_SESSION["absenden"] = $_POST["absenden"];
+
+$timestamp = time();
+    $uhrzeit = date("d.m.Y - H:i", $timestamp);
+    $random_id = rand(1000, 9999);   //Zunkünftig hochzählen durch DB
+    $_SESSION["zeitstempel"] = $uhrzeit;
+    $_SESSION["id"] = $random_id;
+
+method="POST" action="beurlaubung.php?antrag=bis2Tage&akzeptiert=true"
+
+method="POST" action="beurlaubung.php?antrag=bis2Tage&akzeptiert=true"
+
+
+    if ($_FILES["upload"]["error"] == UPLOAD_ERR_OK ) {
+        $tmp_name = $_FILES["upload"]["tmp_name"];
+        $name = basename($_FILES["upload"]["name"]);
+        $upload_dir = "uploads/beurlaubung";
+    
+        if (move_uploaded_file($tmp_name, $upload_dir . $name)) 
+        {}
+    }
+    else {
+    echo "Es gab ein Problem mit der Datei: " . $_FILES["upload"]["error"];
+    }
+    if(isset($_POST['unterschrift'])) {
+        $data = $_POST['unterschrift'];
+        $data = str_replace('data:uploads/unterschrift;base64,', '', $data);
+        $data = str_replace(' ', '+', $data);
+        $data = base64_decode($data);
+        $filename = 'unterschrift.png';
+        file_put_contents($filename, $data);
+    }
+
+    $timestamp = time();
+    $uhrzeit = date("d.m.Y - H:i", $timestamp);
+    $random_id = rand(1000, 9999);   //Zunkünftig hochzählen durch DB
+    $_SESSION["zeitstempel"] = $uhrzeit;
+    $_SESSION["id"] = $random_id;
+
+
+
+        if (empty($variable))
+        {
+            $_SESSION["Fehler"] = "Fülle bitte alle Felder aus!";
+        }
+
+
+
+
+    if(empty($_SESSION["Fehler"]))
+    {
+
+
+    header('Location: status.php?id='.$random_id.'');
+    exit;
+
+    }
+    echo $_SESSION["Fehler"];
+
+    //DEBUG
+    echo 'test3';
+    echo $_SESSION["name_as"];
+    echo '   test3    ';
+    echo $_SESSION["email_as"];
+    echo '   test3    ';
+    echo $_SESSION["name_sus"];
+    echo '    test3      ';
+    echo $_SESSION["geb_sus"];
+    echo '    test3    ';
+    echo $_SESSION["ort_sus"]; 
+    echo '    test3    ';
+    echo $_SESSION["tel_sus"];
+    echo '    test3    ';
+    echo $_SESSION["name_tutor"];
+    echo '    test3    ';
+    echo $_SESSION["kuerzel_tutor"];
+    echo '    test3      ';
+    echo $_SESSION["klasse_sus"];
+    echo '   test3  ';
+    echo $_SESSION["zeitraum_von"];
+    echo '   test3    ';
+    echo $_SESSION["zeitraum_bis"];
+    echo '   test3    ';
+    echo $_SESSION["grund_as"];
+    echo '    test3    ';
+    echo $_SESSION["zeitstempel"];
+    echo '   test3    ';
+    echo  $_SESSION["id"];
+    echo '   test3    ';
+    echo  $_SESSION["absenden"];
+    echo '   test3    ';
+
+    $_SESSION["name_as"] = "";
+    $_SESSION["email_as"] = "";
+    $_SESSION["name_sus"] = "";
+    $_SESSION["geb_sus"] = "";
+    $_SESSION["ort_sus"] = "";
+    $_SESSION["straße_sus"] = "";
+    $_SESSION["tel_sus"] = "";
+    $_SESSION["name_tutor"] = "";
+    $_SESSION["kuerzel_tutor"] = "";
+    $_SESSION["klasse_sus"] = "";
+    $_SESSION["zeitraum_von"] = "";
+    $_SESSION["zeitraum_bis"] = "";
+    $_SESSION["grund_as"] = "";
+    $_SESSION["zeitstempel"] = "";
+    $_SESSION["id"] = "";
+    $_SESSION["absenden"] = "";
