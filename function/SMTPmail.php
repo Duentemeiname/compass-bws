@@ -8,7 +8,7 @@ require_once('PHPMailer/class.smtp.php');
 $mailhost       = "smtp.strato.de"; 
 $mailsmtpauth   = true;
 $mailusername   = "noreply@duentetech.de";
-$mailpassword   = "etf=-D?fFH8p4A@";
+$mailpassword   = "Passwort";
 $mailsmtpsecure = "tls";
 $mailsmtpport = 587;
 
