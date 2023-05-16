@@ -9,8 +9,6 @@
 <?php
 session_start();
 
-echo "PHP is kagge";
-
 include 'includes/header.php';
 require_once ('function/DBconfig.php');
 require_once ('function/SMTPmail.php');
