@@ -1,7 +1,6 @@
 <?php
 include 'includes/header.php';
 ?>
-adghafzdazdzasgdza
 <head>
 <title> Status - Compass </title>
 </head>
