@@ -1,2 +1,6 @@
-Order Deny, Allow
-Deny from All
+Order deny,allow
+Deny from all
+
+<Files "download.php">
+    Allow from all
+</Files>

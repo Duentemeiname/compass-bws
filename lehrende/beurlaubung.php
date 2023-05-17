@@ -73,51 +73,17 @@ if(!$ergebnis)
     {
         $_SESSION["Fehler_ID"] .= '<div class ="status_fehler"> <p>Datenbankverbindung fehlgeschlagen, bitte kontaktieren Sie den Support unter ticket.bws-hofheim.de und nennen den Fehlercodeund teilen Sie uns folgendes mit: '.$Anfrage.'</p> </div>';
     }
-if($ergebnis->num_rows == 0)
+    
+    if($ergebnis->num_rows == 1) 
     {
-        $datei_vorhanden = "0";
+        $downloadlink = "<button class='button_datei' onclick=\"window.open('$domain"."function/download.php?id=$Antrags_ID', '_blank')\">Datei anzeigen</button>";
+        $downloadlinksmall= "<button class='button_datei_small' onclick=\"window.open('$domain"."function/download.php?id=$Antrags_ID', '_blank')\">Datei anzeigen</button>";
+    } 
+    else {
+        $downloadlink = "<p>Es wurde keine Datei hochgeladen.</p>";
+        $downloadlinksmall = "<p>Es wurde keine Datei hochgeladen.</p>";
     }
-else
-    {
-        $datei_vorhanden = "1";
-    }
-if(empty($_SESSION["Fehler_ID"]) && $datei_vorhanden == "1")
-    {
-    //Daten aus der Datenbank werden geladen und in eigene Variablen geschrieben
-    $daten = $ergebnis->fetch_array(); 
-    $Dateiname = $daten[0];
-
-    $PfadzurDatei = $domain."uploads/".$Dateiname;
-    echo $PfadzurDatei;
-
-    }
-
-
-if(!empty($downloadtyp))
-{
-    $content_type = mime_content_type($PfadzurDatei);
-
-
-    if($downloadtyp == "filebrowser")
-    {
-        //Datei direkt im Browser anzeigen
-        header('Content-type: '.$content_type);
-        header('Content-Disposition: inline; filename="'.$PfadzurDatei.'"');
-        readfile($PfadzurDatei);
-        exit();
-    }
-
-    if($downloadtyp == "filedownload")
-    {
-        //Datei Download
-        header('Content-Type: application/octet-stream');
-        header('Content-Transfer-Encoding: Binary'); 
-        header('Content-disposition: attachment; filename="'.$PfadzurDatei.'"');
-        readfile($PfadzurDatei);
-        exit(); 
-    }
-}
-
+    
 
 if(empty($Antrags_ID))
 {
@@ -630,26 +596,7 @@ if(isset($Antrags_ID))
                                 echo $_SESSION["Fehler_ID"];
                                 unset($_SESSION["Fehler_ID"]);
                             }
-
-
-
                         }
-
-                        //Dateidownload wird gebaut
-                        if($datei_vorhanden == "1")
-                        {
-                            $dateiverfuegbarkeit ='
-                            <form method="GET" action="beurlaubung.php">
-                            <input type="hidden" name="id" value="'.$Antrags_ID.'">
-                            <button type="submit"  class="abschicken" name="type" value="filebrowser">Anhang anzeigen</button>
-                            <button type="submit"  class="abschicken" name="type" value="filedownload">Anhang herunterladen</button>
-                            </form>';
-                        }
-
-
-
-
-
 
                         //Daten für die Ausgabe/Detailansicht wird geladen 
                         $Anfrage = "SELECT * FROM bwshofheim.antraege_beurlaubung WHERE $Anfrage_DB"; //SQL Abfrage wird gebaut 
@@ -717,9 +664,8 @@ if(isset($Antrags_ID))
                             $option_value .= '"<option value="genehmigt">genehmigen</option>"';
                             $option_value .= '"<option value="abgelehnt">ablehnen</option>"';
                         }
-
-                        
-
+       
+                    
                         echo'
 
                         <div class="details_beurlaubung">
@@ -727,7 +673,7 @@ if(isset($Antrags_ID))
                     
                         <p class="center"> Dies ist ein Antrag mit maximaler Dauer <strong> '.$maximale_Dauer.' </strong>. Dieser Antrag <strong> '.$Pruefung_SL.' </strong> erneut von der Schulleitung geprüft werden. Bitte genehmigen Sie den Antrag oder lehnen Sie den Antrag ab. </p>
                         <div class="formular">
-                                            <form method="POST" action="beurlaubung.php" enctype="multipart/form-data">
+                                            <form method="POST" enctype="multipart/form-data"> 
                                             <p class="center"> Dieser Antrag wurde am: '.$Datum_gestellt.' gestellt.</p> </br>
 
                                             <hr>
@@ -763,6 +709,10 @@ if(isset($Antrags_ID))
 
                                             <label>Es liegt folgender wichtiger Grund für eine Beurlaubung vor:</label> </br>
                                             <textarea id="laenge" oninput="autoResize()"  class="anmerkung" maxlength="500">'.$grund_as.' </textarea></br>
+
+
+                                            <label>Vom Antragsteller hochgeladene Datei:</label></br>
+                                            '.$downloadlink.'
 
                                             <hr>
 
@@ -811,12 +761,11 @@ if(isset($Antrags_ID))
                         }
                         </script>
 
-                        '.$dateiverfuegbarkeit.'
-
-                        </div>
+                        
 
 
                         ';
+
 
                 
             }
@@ -916,7 +865,7 @@ if(isset($Antrags_ID))
                             </tr>
                             <tr>
                                 <th>Datei:</th>
-                                <td>Noch nicht implementiert </td>
+                                <td>'.$downloadlinksmall.' </td>
                             </tr>
                             <tr>
                                 <th>Status:</th>
@@ -941,7 +890,7 @@ if(isset($Antrags_ID))
                 }
                 else
                 {
-                    if(isset($Antrags_ID))
+                    if(!empty($Antrags_ID))
                     { 
                         echo '<div class="fehler"><p> Sie haben keine Berechtigung diese Inhalte zu bearbeiten. Sollten Sie Rückfragen haben, wenden Sie sich an ticket.bws-hofheim.de</p></div>';
                     }

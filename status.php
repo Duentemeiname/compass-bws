@@ -133,6 +133,28 @@ function passwort(){
     }
     if(isset($_SESSION["passwort"]))
     {
+        //Daten für die Ausgabe Dateidownload wird geladen -> Pfad wird gebaut vor Prüfung auf recht zum Berarbeiten um doppelte implementierung zu verhindern.
+        $Anfrage = "SELECT Dateiname FROM bwshofheim.antraege_beurlaubung_dateiupload WHERE ID_PHP = '{$_SESSION['ID']}'"; //SQL Abfrage wird gebaut 
+        $ergebnis = $db_link->query($Anfrage); //SQL Abfrage wird an die Datenbank übergeben 
+
+        //Antwort der DB auf Korrektheit prüfen
+        if(!$ergebnis)
+            {
+                $_SESSION["Fehler_ID"] .= '<div class ="status_fehler"> <p>Datenbankverbindung fehlgeschlagen, bitte kontaktieren Sie den Support unter ticket.bws-hofheim.de und nennen den Fehlercodeund teilen Sie uns folgendes mit: '.$Anfrage.'</p> </div>';
+            }
+            
+            if($ergebnis->num_rows == 1) 
+            {
+                $Antrags_ID = $_SESSION['ID'];
+                $downloadlink = "<button class='button_datei' onclick=\"window.open('$domain"."function/download.php?id=$Antrags_ID&user=extern', '_blank')\">Datei anzeigen</button>";
+                $downloadlinksmall= "<button class='button_datei_small' onclick=\"window.open('$domain"."function/download.php?id=$Antrags_ID&user=extern', '_blank')\">Datei anzeigen</button>";
+            } 
+            else {
+                $downloadlink = "<p>Es wurde keine Datei hochgeladen.</p>";
+                $downloadlinksmall = "<p>Es wurde keine Datei hochgeladen.</p>";
+            }
+
+
         $Anfrage = "SELECT * FROM bwshofheim.antraege_beurlaubung WHERE id_php = '{$_SESSION['ID']}'"; //SQL Abfrage wird gebaut 
         $ergebnis = $db_link->query($Anfrage); //SQL Abfrage wird an die Datenbank übergeben 
 
@@ -165,7 +187,12 @@ function passwort(){
             $begruendung = $daten[18];
 
 
-            if(password_verify($_SESSION["passwort"], $Passwort)){
+            if(password_verify($_SESSION["passwort"], $Passwort))
+            {
+                //Session[ID_PW] wird für authentifizierung bei Dateiuplaod genutzt. Enthält die ID des Antrages, allerdings NUR dann wenn das Login korrekt ist!
+                $_SESSION["ID_PW"] = $_SESSION['ID'];
+
+
             echo '
             <table class="Tabelle"> 
                 <tr> 
@@ -230,7 +257,7 @@ function passwort(){
                 </tr>
                 <tr>
                     <th>Datei:</th>
-                    <td>Noch nicht implementiert </td>
+                    <td>'.$downloadlinksmall.' </td>
                 </tr>
                 <tr>
                     <th>Status:</th>

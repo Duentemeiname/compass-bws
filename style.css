@@ -264,7 +264,7 @@ details summary::before {
 
 }
 
-.button, .button1, .button2{
+.button, .button1, .button2, .button_datei, .button_datei_small{
     background-color: white;
     border: 3px solid white;
     color: #133e5e;
@@ -279,7 +279,19 @@ details summary::before {
     margin-top: 5%;
 }
 
-.button:hover, .button1:hover, .button2:hover{
+.button_datei{
+    margin-top: 1%;
+    margin-bottom: 1%;
+    padding: 1% 10%;
+}
+
+.button_datei_small{
+    margin: 0%;
+    padding: 0%;
+    font-size: 100%;
+}
+
+.button:hover, .button1:hover, .button2:hover, .button_datei:hover, .button_datei_small:hover{
     background-color:#e9f0f3;
     border: 3px solid #133e5e;
     color: #133e5e;
@@ -291,6 +303,18 @@ details summary::before {
     font-family: 'Open Sans', sans-serif;
     font-weight: 800;
 
+}
+
+.button_datei:hover{
+    margin-top: 1%;
+    margin-bottom: 1%;
+    padding: 1% 10%;
+}
+
+.button_datei_small:hover{
+    margin: 0%;
+    padding: 0%;
+    font-size: 100%;
 }
 
 .button1{
