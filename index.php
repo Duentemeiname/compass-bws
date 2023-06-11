@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php
-include 'includes/header.php';
+include ('includes/header.php');
 ?>
 <head>
 <title> Compass - BWS Hofheim </title>
@@ -18,4 +18,8 @@ include 'includes/header.php';
         </div>
 
     </div>
+
 </body>
+<?php
+include ("includes/footer.php")
+?>

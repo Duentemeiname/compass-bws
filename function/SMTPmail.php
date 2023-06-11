@@ -2,13 +2,14 @@
 
 require_once('PHPMailer/class.phpmailer.php');
 require_once('PHPMailer/class.smtp.php');
+require_once('DBconfig.php');
 
 
 //Parameter für den E-Mail versand vorbereiten 
 $mailhost       = "smtp.strato.de"; 
 $mailsmtpauth   = true;
 $mailusername   = "noreply@duentetech.de";
-$mailpassword   = "Passwort";
+$mailpassword   = "xxxxxxxx";
 $mailsmtpsecure = "tls";
 $mailsmtpport = 587;
 
@@ -24,15 +25,25 @@ $mail->Password = $mailpassword;
 $mail->Port = $mailsmtpport;
 $mail->setFrom('noreply@duentetech.de', 'Compass Brühlwiesenschule');
 
-//Zum Versand von Email:
-// $mail->AddAddress($address, $adrname);
-// $mail->Subject = "Subject";
-// $mail->Body = "Der Mail Body"
-// if(!$mail->Send()) {
-//   echo "Mailer Error: " . $mail->ErrorInfo;
-// } else {
-// echo "Message sent!";
-// }
+function sendEmail($EMail, $Name, $Betreff, $Inhalt)
+{
+    global $mail, $db_link, $uhrzeit, $infos_user, $user_ip;
 
+    $mail->addAddress($EMail, $Name);
+    $mail->isHTML();
+    $mail->Subject = $Betreff;
+    $mail->Body    = $Inhalt;
+    if(!$mail->Send()) 
+    {
+    //Fehlgeschlagene E-Mail Dokumentieren wird in der DB gespeichert
+    $Anfrage = "INSERT INTO log_all(IP_ADDR, action_log, User, Datum, Userdevice) 
+                VALUES ( '$user_ip', 'E-Mail senden an $EMail gescheitert. Grund: $mail->ErrorInfo', '$EMail', '$uhrzeit', '$infos_user')";
+                                           
+    $db_link->query($Anfrage);   
+    }
+    $mail->clearAddresses();
+    $mail->clearAllRecipients();
+    $mail->clearAttachments();
+}
 
 ?>

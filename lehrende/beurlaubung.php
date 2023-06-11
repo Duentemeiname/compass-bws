@@ -2,28 +2,17 @@
 
 
 <head>
-<title>Anträge auf Beurlaubung- Lehrende - Compass </title>
+<title>Anträge auf Beurlaubung - Lehrende - Compass </title>
 
 </head>
 
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 session_start();
 require_once ('../function/DBconfig.php');
 require_once ('../function/SMTPmail.php');
-if(empty($_SESSION["user_logged_in"]))
-{
-    echo '<meta http-equiv="refresh" content="0; URL='.$domain.'login.php">';
-    exit;
-}
-
-
-echo '<body>';
-
-if(isset($_SESSION["user_logged_in"]))
-{
+require_once ('../function/usermeta.php');
+//include ("../includes/footer.php");
     //Prüft Variablen auf korrektheit 
     function check($variable)
         {
@@ -55,7 +44,6 @@ if(isset($_SESSION["user_logged_in"]))
             }
         }
 
-include '../includes/header_lehrende.php';
 //ID aus Browser auslesen: 
 $Antrags_ID = check2($_GET["id"]);
 $Status_Readonly = check2($_GET["read"]);
@@ -63,6 +51,29 @@ $suche_ID = check2($_GET["sucheID"]);
 $suche_Name = check2($_GET["sucheName"]);
 $suche_Klasse = check2($_GET["sucheKlasse"]);
 $downloadtyp = check2($_GET["type"]);
+
+
+if(empty($_SESSION["user_logged_in"]))
+{
+    if(!empty($Antrags_ID))
+    {
+        echo '<meta http-equiv="refresh" content="0; URL='.$domain.'login.php?redirectto=lehrende/beurlaubung.php?id='.$Antrags_ID.'">';
+    }
+    else
+    {
+        echo '<meta http-equiv="refresh" content="0; URL='.$domain.'login.php">';
+    }
+    exit;
+}
+
+
+echo '<body>';
+
+if(isset($_SESSION["user_logged_in"]))
+{
+
+
+include ('../includes/header_lehrende.php');
 
 //Daten für die Ausgabe Dateidownload wird geladen -> Pfad wird gebaut vor Prüfung auf recht zum Berarbeiten um doppelte implementierung zu verhindern.
 $Anfrage = "SELECT Dateiname FROM bwshofheim.antraege_beurlaubung_dateiupload WHERE ID_PHP = '$Antrags_ID'"; //SQL Abfrage wird gebaut 
@@ -76,8 +87,8 @@ if(!$ergebnis)
     
     if($ergebnis->num_rows == 1) 
     {
-        $downloadlink = "<button class='button_datei' onclick=\"window.open('$domain"."function/download.php?id=$Antrags_ID', '_blank')\">Datei anzeigen</button>";
-        $downloadlinksmall= "<button class='button_datei_small' onclick=\"window.open('$domain"."function/download.php?id=$Antrags_ID', '_blank')\">Datei anzeigen</button>";
+        $downloadlink = "<button type='button' class='button_datei' onclick=\"window.open('$domain"."function/download.php?id=$Antrags_ID', '_blank')\">Datei anzeigen</button>";
+        $downloadlinksmall= "<button type='button' class='button_datei_small' onclick=\"window.open('$domain"."function/download.php?id=$Antrags_ID', '_blank')\">Datei anzeigen</button>";
     } 
     else {
         $downloadlink = "<p>Es wurde keine Datei hochgeladen.</p>";
@@ -88,7 +99,7 @@ if(!$ergebnis)
 if(empty($Antrags_ID))
 {
 
-if($_SESSION["Tutor"] == "true" && $_SESSION["SL"] == "false")
+if(userTutor() == "true" && userSL() == "false")
 {
     $readonly ="&read=true";
 }
@@ -96,7 +107,7 @@ if($_SESSION["Tutor"] == "true" && $_SESSION["SL"] == "false")
 
 // Informationen zu Anträgen auf Beurlaubung im Status offen:
 //Datenbankabfrage wird gebaut: 
-$Anfrage = "SELECT ID_PHP, Art, name_SuS, zeitraum_von, zeitraum_bis FROM bwshofheim.antraege_beurlaubung WHERE kuerzel_tutor = '{$_SESSION["Kuerzel"]}' AND status_antrag = 'offen' ORDER BY ID_Datenbank DESC"; //SQL Abfrage wird gebaut 
+$Anfrage = "SELECT ID_PHP, Art, name_SuS, zeitraum_von, zeitraum_bis FROM bwshofheim.antraege_beurlaubung WHERE kuerzel_tutor = '" . Kuerzel() . "' AND status_antrag = 'offen' ORDER BY ID_Datenbank DESC"; //SQL Abfrage wird gebaut 
 $ergebnis = $db_link->query($Anfrage); //SQL Abfrage wird an die Datenbank übergeben 
 
 //Antwort der DB auf Korrektheit prüfen
@@ -118,7 +129,7 @@ else
 
 
 //Anfrage Daten im Status Schulleitung für Tutor
-$Anfrage = "SELECT ID_PHP, Art, name_SuS, zeitraum_von, zeitraum_bis FROM bwshofheim.antraege_beurlaubung WHERE kuerzel_tutor = '{$_SESSION["Kuerzel"]}' AND status_antrag = 'schulleitung' ORDER BY ID_Datenbank DESC"; //SQL Abfrage wird gebaut 
+$Anfrage = "SELECT ID_PHP, Art, name_SuS, zeitraum_von, zeitraum_bis FROM bwshofheim.antraege_beurlaubung WHERE kuerzel_tutor = '" . Kuerzel() . "' AND status_antrag = 'schulleitung' ORDER BY ID_Datenbank DESC"; //SQL Abfrage wird gebaut 
 $ergebnis = $db_link->query($Anfrage); //SQL Abfrage wird an die Datenbank übergeben 
 
 //Antwort der DB auf Korrektheit prüfen
@@ -191,7 +202,7 @@ else
 
 
 //Anfrage Daten im Status genehmigt
-$Anfrage = "SELECT ID_PHP,Art, name_SuS, zeitraum_von, zeitraum_bis FROM bwshofheim.antraege_beurlaubung WHERE kuerzel_tutor = '{$_SESSION["Kuerzel"]}' AND status_antrag = 'genehmigt' ORDER BY ID_Datenbank DESC"; //SQL Abfrage wird gebaut 
+$Anfrage = "SELECT ID_PHP,Art, name_SuS, zeitraum_von, zeitraum_bis FROM bwshofheim.antraege_beurlaubung WHERE kuerzel_tutor = '" . Kuerzel() . "' AND status_antrag = 'genehmigt' ORDER BY ID_Datenbank DESC"; //SQL Abfrage wird gebaut 
 $ergebnis = $db_link->query($Anfrage); //SQL Abfrage wird an die Datenbank übergeben 
 
 //Antwort der DB auf Korrektheit prüfen
@@ -211,7 +222,7 @@ else
 }
 
 //Anfrage Daten im Status abgelehnt
-$Anfrage = "SELECT ID_PHP, Art, name_SuS, zeitraum_von, zeitraum_bis FROM bwshofheim.antraege_beurlaubung WHERE kuerzel_tutor = '{$_SESSION["Kuerzel"]}' AND status_antrag = 'abgelehnt' ORDER BY ID_Datenbank DESC"; //SQL Abfrage wird gebaut 
+$Anfrage = "SELECT ID_PHP, Art, name_SuS, zeitraum_von, zeitraum_bis FROM bwshofheim.antraege_beurlaubung WHERE kuerzel_tutor = '" . Kuerzel() . "' AND status_antrag = 'abgelehnt' ORDER BY ID_Datenbank DESC"; //SQL Abfrage wird gebaut 
 $ergebnis = $db_link->query($Anfrage); //SQL Abfrage wird an die Datenbank übergeben 
 
 //Antwort der DB auf Korrektheit prüfen
@@ -257,7 +268,7 @@ echo'
  ';
 
  //Prüfung ob Suchfunktion ausgelöst wurde
- if(!empty($suche_ID) || !empty($suche_Name) || !empty($sucheKlasse))
+ if(!empty($suche_ID) || !empty($suche_Name) || !empty($suche_Klasse))
  {
     $where = '';
     if(!empty($suche_ID))
@@ -276,19 +287,19 @@ echo'
         $where .= " name_SuS LIKE '%$suche_Name%'";
     }
 
-    if(!empty($sucheKlasse))
+    if(!empty($suche_Klasse))
     {
         $suche_Klasse = check($suche_Klasse);
         if(!empty($where))
         {
             $where .= "AND";
         }
-        $where .= " klasse_sus LIKE '%$$suche_Klasse%'";
+        $where .= " klasse_sus LIKE '%$suche_Klasse%'";
     }
 
-    if($_SESSION["SL"] != "true")
+    if(userSL() != "true")
     {
-        $where .= "AND kuerzel_tutor = '{$_SESSION["Kuerzel"]}' ";
+        $where .= "AND kuerzel_tutor = '".Kuerzel()."' ";
     }
 
     $Anfrage = "SELECT * FROM bwshofheim.antraege_beurlaubung WHERE $where ORDER BY ID_Datenbank DESC"; //SQL Abfrage wird gebaut 
@@ -329,7 +340,7 @@ echo'
         
 }
 
- if($_SESSION["SL"] == "true")
+ if(userSL() == "true")
  {
     echo'
     <h1 class="header_lehrende">Anträge, die durch die Schulleitung genehmigt werden müssen:</h1>
@@ -380,6 +391,7 @@ echo'
         </tr>
                
 </table>
+<hr class="abstand">
 <h1 class="header_lehrende">Anträge auf Beurlaubung im Status Schulleitung:</h1>
 <table class="Tabelle"> 
     <tr> 
@@ -420,7 +432,7 @@ echo'
             '.$Ausgabe_Tabelle_abgelehnt.'
         </tr>       
 </table>
- <p class="center"> Hinweise: Sie müssen alle Anträge, die gestellt werden, genehmigen oder ablehnen. Sollte ein Antrag auf Beurlaubung eine Zeitspanne über 2 Tage überschreiten, wird der Antrag automatisch nach Ihrer genehmigung an die Schulleitung weitergegeben, die den Antrag ebenfalls genemigen muss. Die entscheidung der Schulleitung wird Ihnen und dem SuS automatisch mitgeteilt. <br>
+ <p class="center_hinweise"> Hinweise: Sie müssen alle Anträge, die gestellt werden, genehmigen oder ablehnen. Sollte ein Antrag auf Beurlaubung eine Zeitspanne über 2 Tage überschreiten, wird der Antrag automatisch nach Ihrer genehmigung an die Schulleitung weitergegeben, die den Antrag ebenfalls genemigen muss. Die entscheidung der Schulleitung wird Ihnen und dem SuS automatisch mitgeteilt. <br>
  Sobald ein Antrag im Status "Schulleitung" oder "genehmigt" ist, kann er durch Sie nicht mehr bearbeitet werden. Anträge im Status abgelehnt können bearbeitet werden und erneut freigegeben werden. Auch hier wird der Antrag an die Schulleitung weitergegeben, sobald er 2 Tage überschreitet.
 
 
@@ -428,13 +440,12 @@ echo'
  
  ';
 
-
 }
 
-if(isset($Antrags_ID))
+if(!empty($Antrags_ID))
 {
         //Wichtige Details des Antrags werden geladen: 
-        $Anfrage = "SELECT status_antrag FROM bwshofheim.antraege_beurlaubung WHERE ID_PHP = '$Antrags_ID' AND kuerzel_tutor = '{$_SESSION["Kuerzel"]}'"; //SQL Abfrage wird gebaut 
+        $Anfrage = "SELECT status_antrag FROM bwshofheim.antraege_beurlaubung WHERE ID_PHP = '$Antrags_ID' AND kuerzel_tutor = '".Kuerzel()."'"; //SQL Abfrage wird gebaut 
         $ergebnis = $db_link->query($Anfrage); //SQL Abfrage wird an die Datenbank übergeben 
 
         //Antwort der DB auf Korrektheit prüfen
@@ -459,19 +470,19 @@ if(isset($Antrags_ID))
         
 
 
-            if(($STATUS_aktueller_Antrag == "offen" && $_SESSION["Tutor"] == "true" || $_SESSION["SL"] == "true") || ($STATUS_aktueller_Antrag == "abgelehnt" && $_SESSION["Tutor"] == "true" || $_SESSION["SL"] == "true")||($STATUS_aktueller_Antrag == "SL" && $_SESSION["SL"] == "true") || ($STATUS_aktueller_Antrag == "genehmigt" && $_SESSION["SL"] == "true"))
+            if(($STATUS_aktueller_Antrag == "offen" && userTutor() == "true" || userSL() == "true") || ($STATUS_aktueller_Antrag == "abgelehnt" && userTutor() == "true" || userSL() == "true")||($STATUS_aktueller_Antrag == "SL" && userSL() == "true") || ($STATUS_aktueller_Antrag == "genehmigt" && userSL() == "true"))
             {
                 
             
 
                 //Abfrage wird modifiziert für SL (wenn SL fällt die Prüfung weg, ob der Nutzer bearbeiten darf)
-                if($_SESSION["SL"] == "true")
+                if(userSL() == "true")
                 {
                     $Anfrage_DB = "ID_PHP = '{$Antrags_ID}'";
                 }
                 else 
                 {
-                    $Anfrage_DB = "ID_PHP = '{$Antrags_ID}' AND kuerzel_tutor = '{$_SESSION["Kuerzel"]}'";
+                    $Anfrage_DB = "ID_PHP = '{$Antrags_ID}' AND kuerzel_tutor = '".Kuerzel()."'";
                 }
 
                         //Verarbeitung eingaben über Formular 
@@ -491,6 +502,7 @@ if(isset($Antrags_ID))
                             $zeitraum_bis = check($_POST["date_bis"]);
                             $status_Antrag = check($_POST["status"]);
                             $Anmerkung = check2($_POST["anmerkung"]);
+                            $grenzt_an_Ferien = check2($_POST["Ferien"]);
 
                             if($status_Antrag != "genehmigt" && $status_Antrag != "abgelehnt")
                             {
@@ -538,12 +550,12 @@ if(isset($Antrags_ID))
                             }
 
                             //Prüft ob Antrag relevant für SL ist
-                            if($status_Antrag == "genehmigt" && $ArtAntrag == "ueber2Tage" && $_SESSION["SL"] == "false")
+                            if(($status_Antrag == "genehmigt" && $ArtAntrag == "ueber2Tage" && userSL() == "false")||($grenzt_an_Ferien == "true" && userSL() == "false"))
                             {
                                 $status_Antrag = "schulleitung";
                             }
 
-                            if($status_Antrag == "genehmigt" && $ArtAntrag == "ueber2Tage" && $_SESSION["SL"] == "true")
+                            if($status_Antrag == "genehmigt" && $ArtAntrag == "ueber2Tage" && userSL() == "true")
                             {
                                 $status_Antrag = "genehmigt";
                             }
@@ -567,26 +579,11 @@ if(isset($Antrags_ID))
                                 
                                 if(empty($_SESSION["Fehler_ID"]))
                                 {
-                                    //E-Mail an Antragsteller wird gesendet
-                                    $mail->addAddress($email_as, $name_as);
-                                    //$mail->addAttachment("");
-                                    $mail->isHTML();
-                                    $mail->Subject = 'Dein Antrag Compass BWS';
-                                    $mail->Body    = 'Dein Antrag wurde bearbeitet und befindet sich im Status '.$status_Antrag;
-                                    $mail->Send();
-
-                                    //Alle vorherigen gespeicherten Inhalte werden gelöscht
-                                    $mail->clearAddresses();
-                                    $mail->clearAllRecipients();
-                                    $mail->clearAttachments();
-
-                                    //Email an die Lehrkraft wird vorbereitet
-                                    $mail->addAddress($_SESSION["EMail"], $_SESSION["Name_voll"]);
-                                    //$mail->addAttachment("");
-                                    $mail->isHTML();
-                                    $mail->Subject = 'Antrag wurde bearbeitet';
-                                    $mail->Body    = 'Antrag wurde bearbeitet und befindet sich im Status '.$status_Antrag;
-                                    $mail->Send();
+                                    $status_user = 'Dein Antrag wurde bearbeitet und befindet sich im Status '.$status_Antrag;
+                                    $status_tutor = 'Antrag wurde bearbeitet und befindet sich im Status '.$status_Antrag;
+                                    sendEmail($email_as, $name_as, "Aktueller Stand Deines Antrages.", $status_user);
+                                    sendEmail(Email(),Vorname()." ".Nachname(), "Antrag wurde bearbeitet.", $status_tutor);
+                                    insert_verlauf($Antrags_ID);
 
                                     echo '<meta http-equiv="refresh" content="0; URL='.$domain.'lehrende/beurlaubung.php">';
                                 }
@@ -664,6 +661,15 @@ if(isset($Antrags_ID))
                             $option_value .= '"<option value="genehmigt">genehmigen</option>"';
                             $option_value .= '"<option value="abgelehnt">ablehnen</option>"';
                         }
+
+                        if(userSL() != "true")
+                        {
+                            $ferien_html = 
+                            '<label class="checkbox">Der Antrag grenzt an Ferien.
+                            <input type="checkbox" name="Ferien" value="true">
+                            <span class="checkmark"></span>
+                            </label>';
+                        }
        
                     
                         echo'
@@ -675,6 +681,7 @@ if(isset($Antrags_ID))
                         <div class="formular">
                                             <form method="POST" enctype="multipart/form-data"> 
                                             <p class="center"> Dieser Antrag wurde am: '.$Datum_gestellt.' gestellt.</p> </br>
+                                            <button type="button" class="button_datei" onclick="window.open(\'' . $domain . 'function/creatPDF.php?typ=beurlaubung&id=' . $Antrags_ID . '\', \'_blank\')">Drucken</button>
 
                                             <hr>
 
@@ -704,10 +711,10 @@ if(isset($Antrags_ID))
                                             <label>Klasse</label> </br>
                                             <input value="'.$klasse_sus.'" type="text" name="klasse_sus"required> </br>
 
-                                            <label>Beurlaubung von - bis: </label> </br>
+                                            <label>Beurlaubung von - bis: (bitte Zeitraum unten ändern) </label> </br>
                                             <input value="'.$zeitraum_von.'" class="datum" type="date"><input value="'.$zeitraum_bis.'" class="datum" type="date"> </br>
 
-                                            <label>Es liegt folgender wichtiger Grund für eine Beurlaubung vor:</label> </br>
+                                            <label>Es liegt folgender wichtiger Grund für eine Beurlaubung vor: (nicht veränderbar)</label> </br>
                                             <textarea id="laenge" oninput="autoResize()"  class="anmerkung" maxlength="500">'.$grund_as.' </textarea></br>
 
 
@@ -730,9 +737,7 @@ if(isset($Antrags_ID))
 
                                             <label>Anmerkungen:</label> </br>
                                             <textarea id="laenge" oninput="autoResize()" class="anmerkung" maxlength="500"  name="anmerkung" > </textarea></br>
-
-                                            <label>Grenzt dieser Antrag an Ferien?</label></br>
-                                            <input type="checkbox" name="Ferien" value="Ferien">
+                                            '.$ferien_html.'
 
                                             <button type="submit"  class="abschicken" name="absenden" value="true">Speichern</button>
                                             </form>
@@ -774,7 +779,7 @@ if(isset($Antrags_ID))
                 if($Status_Readonly == "true")
                 {
 
-                    $Anfrage = "SELECT * FROM bwshofheim.antraege_beurlaubung WHERE ID_PHP = '{$Antrags_ID}' AND kuerzel_tutor = '{$_SESSION["Kuerzel"]}'"; //SQL Abfrage wird gebaut 
+                    $Anfrage = "SELECT * FROM bwshofheim.antraege_beurlaubung WHERE ID_PHP = '{$Antrags_ID}' AND kuerzel_tutor = '".Kuerzel()."'"; //SQL Abfrage wird gebaut 
                     $ergebnis = $db_link->query($Anfrage); //SQL Abfrage wird an die Datenbank übergeben 
             
                     //Antwort der DB auf Korrektheit prüfen
@@ -809,7 +814,7 @@ if(isset($Antrags_ID))
                         <h1 class="header_lehrende">Detailansicht zu Antrag "'.$ID_PHP.'"</h1>
                     
                         <p class="center">Sie können diesen Antrag aktuell nicht bearbeiten.</p>
-                        
+                        <button type="button" class="button_datei_edit" onclick="window.open(\'' . $domain . 'function/creatPDF.php?typ=beurlaubung&id=' . $Antrags_ID . '\', \'_blank\')">Drucken</button>
                         <table class="Tabelle"> 
                             <tr> 
                                 <th>Antrags ID:</th>  
@@ -897,16 +902,11 @@ if(isset($Antrags_ID))
                 }
             }
         }  
-
-//Hier hinter für nicht eingeloggte Nutzer 
+        echo "</div>";
+        echo "</div>";
+        include ("../includes/footer.php");
 }
 
-//Alle nicht angemedlete Nutzer werden zum Login geschickt
-else
-{
-    echo $_SESSION["user_logged_in"];
-    echo '<meta http-equiv="refresh" content="0; URL='.$domain.'login.php">';
-}
 
 ?>
 </body>

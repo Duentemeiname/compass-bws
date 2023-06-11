@@ -19,8 +19,8 @@ header('Expires: 0'); // Proxies
 
     if(isset($_SESSION["antrag_erfolgreich"]))
     {
-        unset($_SESSION["antrag_erfolgreich"]);
-        header('Location: beurlaubung.php'); //Leitet per GET auf beaurlaubung.php weiter
+        DeletSessionVariables();
+        header('Location: beurlaubung.php?akzeptiert=true'); //Leitet per GET auf beaurlaubung.php weiter
     }
     //Holt alle Variablen über GET
     $Akzeptiert = $_GET["akzeptiert"];
@@ -140,7 +140,7 @@ header('Expires: 0'); // Proxies
         {
             $zielordner = "/volume1/web/test-umgebung/bwshofheim/uploads/{$uhrzeit_datei}_";  //Standardverzeichnis wird angelegt 
             $_SESSION["zieldatei"] = $zielordner.basename($_FILES["upload"]["name"]); //Dtei wird gebaut aus uploadname und Speicherort //$_SESSION["zieldatei"] = $zielordner.basename($_FILES["upload"]["name"]);
-            $_SESSION["Dateiname"] = basename($_FILES["upload"]["name"]); //Name der Datei wird abgespeichert
+            $_SESSION["Dateiname"] = $uhrzeit_datei."_".basename($_FILES["upload"]["name"]); //Name der Datei wird abgespeichert
             $_SESSION["dateigröße"] = $_FILES["upload"]["size"];  //Größe der Datei wird bestimmt
             $_SESSION["dateiformat"] = strtolower(pathinfo($_SESSION["zieldatei"], PATHINFO_EXTENSION)); //Dateieindung wird ausgelesen
 
@@ -330,34 +330,22 @@ header('Expires: 0'); // Proxies
                                         }
                                         
 
-                                        $_SESSION["antrag_erfolgreich"] = "aspdi8ufgaduas+ßed8w321e";
-                                        //E-Mail an Antragsteller wird gesendet
-                                        $mail->addAddress($_SESSION["email_as"], $_SESSION["name_as"]);
-                                        //$mail->addAttachment("");
-                                        $mail->isHTML();
-                                        $mail->Subject = 'Dein Antrag wurde erfolgreich gestellt!'.$_SESSION["ID"];
-                                        $mail->Body    = 'Dies ist eine erste Testemail'.$_SESSION["PW"];
-                                            if(!$mail->Send()) {
-                                                $_SESSION["Fehler_EMAIL_Senden"] = '"Mailer Error: " '. $mail->ErrorInfo.'';
-                                            }
+                                         $_SESSION["antrag_erfolgreich"] = "true";
+                                         //E-Mail an Antragsteller wird gesendet
+                                        $LinkzurDatei = $domain."lehrende/beurlaubung.php?id=".$_SESSION["ID"];
+                                        $Betreff_steller = 'Dein Antrag wurde erfolgreich gestellt!';
+                                        $Betreff_tutor = 'Neuer Antrag auf Beurlaubung';
+                                        $Inhalt_steller = 'Dein Antrag mit der ID: '.$_SESSION["ID"].' wurde erfolgreich erstellt. Dein Passwort lautet: '.$_SESSION["PW"].'';
+                                        $Inhalt_tutor = 'Dies ist eine erste Testemail an den Tutur. Antrag hat die ID:'.$_SESSION["ID"].'<br> Bitte klicken Sie auf folgenden Link um den Antrag zu bearbeiten: '.$LinkzurDatei;
 
-                                        //Alle vorherigen gespeicherten Inhalte werden gelöscht
-                                        $mail->clearAddresses();
-                                        $mail->clearAllRecipients();
-                                        $mail->clearAttachments();
 
-                                        //Email an die Lehrkraft wird vorbereitet
-                                        $mail->addAddress($_SESSION["email_tutor"], $_SESSION["name_tutor"]);
-                                        //$mail->addAttachment("");
-                                        $mail->isHTML();
-                                        $mail->Subject = 'Neuer Antrag auf Beurlaubung';
-                                        $mail->Body    = 'Dies ist eine erste Testemail an den Tutur. Antrag hat die ID:'.$_SESSION["ID"];
-                                            if(!$mail->Send()) {
-                                                $_SESSION["Fehler_EMAIL_Senden"] = '"Mailer Error: " '. $mail->ErrorInfo.'';
-                                            }
+                                        sendEmail($_SESSION["email_as"], $_SESSION["name_as"], $Betreff_steller, $Inhalt_steller);
+                                        sendEmail($_SESSION["email_tutor"], $_SESSION["name_tutor"], $Betreff_tutor, $Inhalt_tutor);
+                                        insert_verlauf_steller($_SESSION["ID"], $_SESSION["name_as"]);
+
                                         header("Cache-Control: no-cache, must-revalidate"); // setzt Cache-Control Header
                                         header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // setzt Ablaufdatum in der Vergangenheit
-                                        //echo '<meta http-equiv="refresh" content="0; URL='.$domain.'status.php?id='.$_SESSION["ID"].'">';
+                                        echo '<meta http-equiv="refresh" content="0; URL='.$domain.'status.php?id='.$_SESSION["ID"].'">';
                                         DeletSessionVariables (); //Löscht alle Session-Variablen die für das Formular angelegt wurden
                                         exit;
                                     }
@@ -534,7 +522,7 @@ header('Expires: 0'); // Proxies
 
                             <button type="submit"  class="abschicken" name="absenden" value="true">Antrag auf Beurlaubung abschicken.</button>
                             </form>
-                            <script>
+
                         </div>
                         
                     </div>
@@ -547,6 +535,8 @@ header('Expires: 0'); // Proxies
     else{
         echo '<div> <p> Bitte akzeptieren Sie die Bedingungen auf der vorherigen Seite! <p/> </div>';
     }
-?>
-    </div>
-</body>
+    echo"</div>
+    </body></br>";
+
+    include ("includes/footer.php");
+    ?>

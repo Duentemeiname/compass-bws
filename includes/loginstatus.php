@@ -4,11 +4,22 @@
 </head>
 <?php
 session_start();
-//<button class="abschicken" onclick="window.location.href=\'beurlaubung.php?akzeptiert=true\'"> Login für Lehrende </button>
+if(file_exists('../function/usermeta.php'))
+    require_once('../function/usermeta.php');
+
+if(file_exists('function/usermeta.php'))
+    require_once('function/usermeta.php');
+
+if(file_exists('../function/DBconfig.php'))
+    require_once('../function/DBconfig.php');
+
+if(file_exists('function/DBconfig.php'))
+    require_once('function/DBconfig.php');
+
 
 function loggedin()
 {
-    $domain = "https://test-umgebung.duentetech.de/bwshofheim/";
+    global $domain;
 
     if(empty($_SESSION ["user_logged_in"]))
     {
@@ -16,7 +27,7 @@ function loggedin()
     }
     if(isset($_SESSION ["user_logged_in"]))
     {
-        echo '<button class="button_loginstatus" onclick="window.location.href=\''.$domain.'login.php?logout=true\'">Hallo '.$_SESSION["Name_voll"].', Logout?</button>';
+        echo '<button class="button_loginstatus" onclick="window.location.href=\''.$domain.'login.php?logout=true\'">Hallo '.Vorname()." ".Nachname().', Logout?</button>';
         echo '<a class="logout_mobile" href="login.php?logout=true">Logout</a>';
     }
     

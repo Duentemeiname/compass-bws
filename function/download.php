@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once ('../function/DBconfig.php');
-
+require_once ('DBconfig.php');
+require_once ('usermeta.php');
 
 $ID_PHP = $_GET["id"];
 $user = $_GET["user"];
@@ -11,7 +11,7 @@ if($user == "extern")
 {
     if($ID_PHP != $_SESSION["ID_PW"]) //Siehe status.php
     {
-       echo "Fehler bei der Zuordnung des Antrages.";
+       echo "Fehler bei der Zuordnung des Antrages. Berechtigung?";
        exit();
     }
     $verifiziert = "true";
@@ -53,9 +53,9 @@ if($user == "extern")
 
             if(empty($verifiziert)) //Prüfung ob von  status.php verfiziert siehe oben in dieser Datei
             {
-            if($_SESSION["SL"] != "true") //Prüfung ob SL dann fällt Prüfung auf tutor zugriff weg
+            if(userSL() != "true") //Prüfung ob SL dann fällt Prüfung auf tutor zugriff weg
             {
-                if($kuerzel_tutor != $_SESSION["Kuerzel"]) //Prüfung ob der Tutor zugreifen darf
+                if($kuerzel_tutor != Kuerzel()) //Prüfung ob der Tutor zugreifen darf
                 {
                     echo "Sie haben keine Berechtigung diese Datei herunterzuladen.";
                     exit();
@@ -64,9 +64,16 @@ if($user == "extern")
             }
             $filepath = '../uploads/'.$Dateiname;
 
-            if (!file_exists($filepath) || !is_readable($filepath)) 
+            if (!(file_exists($filepath))) 
             {
-                echo "Dateizugriff gescheitert. ";
+                echo "Dateizugriff gescheitert. Code: file_exist ";
+                echo $filepath;
+                exit();
+            }
+            if(!(is_readable($filepath)))
+            {
+                echo "Dateizugriff gescheitert. Code: is_readable ";
+                echo $filepath;
                 exit();
             }
             header('Content-Type: application/pdf');

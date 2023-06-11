@@ -3,6 +3,7 @@ session_start();
 
 require_once ('../function/DBconfig.php');
 require_once ('../function/SMTPmail.php');
+require_once ('../function/usermeta.php');
 
 if(empty($_SESSION["user_logged_in"]))
 {
@@ -20,7 +21,7 @@ if(isset($_SESSION ["user_logged_in"]))
     include('../includes/menu.php');
 
     //Daten für Schnellübersicht für Beurlaubung aus DB laden
-    $Anfrage = "SELECT COUNT(*) FROM bwshofheim.antraege_beurlaubung WHERE kuerzel_tutor = '{$_SESSION["Kuerzel"]}' AND status_antrag = 'offen'"; //SQL Abfrage wird gebaut 
+    $Anfrage = "SELECT COUNT(*) FROM bwshofheim.antraege_beurlaubung WHERE kuerzel_tutor = '".Kuerzel()."' AND status_antrag = 'offen'"; //SQL Abfrage wird gebaut 
     $ergebnis = $db_link->query($Anfrage); //SQL Abfrage wird an die Datenbank übergeben 
 
     //Antwort der DB auf Korrektheit prüfen
@@ -60,14 +61,12 @@ if(isset($_SESSION ["user_logged_in"]))
     ';
 
  }
- else
- {
-     echo '<meta http-equiv="refresh" content="0; URL='.$domain.'login.php">';
- }
-
-// ?>
+?>
 
 
 
-
+</div>
 </body>
+
+<?php
+ include ("../includes/footer.php");

@@ -5,20 +5,20 @@ $_SESSION ["user_logged_in"];
 
 $_SESSION["ID"];
 
-$_SESSION["Nachname"];
+$_SESSION["Nachname"]; -> Nachname()
 
-$_SESSION["Vorname"];
+$_SESSION["Vorname"]; -> Vorname()
 
-$_SESSION["Kuerzel"];
+$_SESSION["Kuerzel"]; -> Kuerzel()
 
-$_SESSION["EMail"];
+$_SESSION["EMail"]; -> Email()
 
 $_SESSION["Passwort"];
 
-$_SESSION["Administrator"];
+$_SESSION["Administrator"]; -> userAdmin()
 
-$_SESSION["Tutor"];
+$_SESSION["Tutor"]; -> userTutor()
 
-$_SESSION["SL"];
+$_SESSION["SL"]; -> userSL()
 
 $_SESSION["Name_voll"];

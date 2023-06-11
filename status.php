@@ -10,6 +10,7 @@ session_start();
 
 include 'includes/header.php';
 require_once ('function/DBconfig.php');
+require_once ('function/usermeta.php');
 
 //ID aus Browser auslesen: 
  $_SESSION["ID"] = $_GET["id"];
@@ -128,7 +129,7 @@ function passwort(){
     echo "<h2> Weitere Details Ihres Antrages:</h2>";
 
     if(empty($_SESSION["passwort"])){
-    echo "<p> Um weitere Details zu Ihrem Antrag anzeigen zu können, geben Sie bitte das Passwort ein, dass Sie per E-Mail erhalten haben!";
+    echo "<p> Um weitere Details zu Ihrem Antrag anzeigen zu können und die Bestätigung auszudrucken, geben Sie bitte das Passwort ein, dass Sie per E-Mail erhalten haben!";
     passwort();
     }
     if(isset($_SESSION["passwort"]))
@@ -150,10 +151,10 @@ function passwort(){
                 $downloadlinksmall= "<button class='button_datei_small' onclick=\"window.open('$domain"."function/download.php?id=$Antrags_ID&user=extern', '_blank')\">Datei anzeigen</button>";
             } 
             else {
-                $downloadlink = "<p>Es wurde keine Datei hochgeladen.</p>";
-                $downloadlinksmall = "<p>Es wurde keine Datei hochgeladen.</p>";
+                $downloadlink = "Es wurde keine Datei hochgeladen.";
+                $downloadlinksmall = "Es wurde keine Datei hochgeladen.";
             }
-
+        
 
         $Anfrage = "SELECT * FROM bwshofheim.antraege_beurlaubung WHERE id_php = '{$_SESSION['ID']}'"; //SQL Abfrage wird gebaut 
         $ergebnis = $db_link->query($Anfrage); //SQL Abfrage wird an die Datenbank übergeben 
@@ -161,8 +162,17 @@ function passwort(){
         //Antwort der DB auf Korrektheit prüfen
         if(!$ergebnis){
             $_SESSION["Fehler_ID"] = "1";
-            echo'<div class ="status_fehler"> <p>Datenbankverbindung fehlgeschlagen, bitte kontaktieren Sie den Support unter ticket.bws-hofheim.de und nennen den Fehlercode: </p> </div>' . $db_link->connect_error;
+            echo'<div class ="status_fehler"> <p>Datenbankverbindung fehlgeschlagen, bitte kontaktieren Sie den Support unter ticket.bws-hofheim.de und nennen den Fehlercode:' . $Anfrage.'</p> </div>';
         }
+
+        $Anfrage ="SELECT Nutzer, Datum FROM bwshofheim.antraege_beurlaubung_verlauf WHERE ID_PHP = '{$_SESSION['ID']}' ORDER BY ID DESC";
+        $ergebnis_verlauf = $db_link->query($Anfrage);
+
+        if(!$ergebnis_verlauf){
+            $_SESSION["Fehler_ID"] = "1";
+            echo'<div class ="status_fehler"> <p>Datenbankverbindung fehlgeschlagen, bitte kontaktieren Sie den Support unter ticket.bws-hofheim.de und nennen den Fehlercode: ' . $Anfrage.'</p> </div>';
+        }
+
         if(empty($_SESSION["Fehler_ID"])){
 
             //Daten aus der Datenbank werden geladen und in eigene Variablen geschrieben
@@ -186,14 +196,24 @@ function passwort(){
             $status = $daten[17];
             $begruendung = $daten[18];
 
+            $daten = $ergebnis_verlauf->fetch_array();
+            $last_user = $daten[0];
+            $last_datum = $daten[1];
+
 
             if(password_verify($_SESSION["passwort"], $Passwort))
             {
+                if(empty($begruendung))
+                {
+                    $begruendung = "Es wurden keine Anmerkungen gemacht.";
+                }
                 //Session[ID_PW] wird für authentifizierung bei Dateiuplaod genutzt. Enthält die ID des Antrages, allerdings NUR dann wenn das Login korrekt ist!
                 $_SESSION["ID_PW"] = $_SESSION['ID'];
 
 
             echo '
+            <button class="button_datei" onclick="window.open(\''.$domain.'function/creatPDF.php?typ=beurlaubung&id='.$Antrags_ID.'&user=extern\', \'_blank\')">Drucken</button>
+            <hr>
             <table class="Tabelle"> 
                 <tr> 
                     <th>Antrags ID:</th>  
@@ -268,11 +288,11 @@ function passwort(){
                 </tr>
                 <tr>
                     <th>Letzte Bearbeitung am:</th>
-                    <td></td>
+                    <td>'.$last_datum.'</td>
                 </tr>
                 <tr>
                     <th>Letzte Bearbeitung durch:</th>
-                    <td></td>
+                    <td>'.$last_user.'</td>
                 </tr>
                 </table>
                 <p> Sie können diese Daten nicht mehr verändern. Liegt ein Fehler vor, wenden Sie sich per E-Mail an <a href="mailto:'.$email_tutor.'">'.$name_tutor.' </a></p>
@@ -299,9 +319,10 @@ else{
 
 }
 
-
 ?>
                     </div>
                 </div>
             </div>
  </div>
+ <?php
+ include ("includes/footer.php");

@@ -9,10 +9,10 @@
 <?php
 session_start();
 
-
 include 'includes/header.php';
 require_once ('function/DBconfig.php');
 require_once ('function/SMTPmail.php');
+require_once ('function/usermeta.php');
 
 header('Cache-Control: no-cache, no-store, must-revalidate'); // HTTP 1.1
 header('Pragma: no-cache'); // HTTP 1.0
@@ -37,18 +37,23 @@ $reset_passwort = $_GET["reset_passwort"];
 $reset_pw_key = $_GET["reset_pw_key"];
 $user_id = $_GET["user"];
 $logout = $_GET["logout"];
-$_SESSION["redirect"] = $_GET["redirect"];
+$_SESSION["redirect"]= $_GET["redirectto"];
 $_SESSION["Email"] = check($_POST["email"]);
 $Passwort_login = check($_POST["passwort"]);
 $_SESSION["email_reset"] = check($_POST["email_reset"]);
 $neuesPasswort1 = check($_POST["passwort_reset_1"]);
 $neuesPasswort2 = check($_POST["passwort_reset_2"]);
 
-
-
+echo $redirect;
 echo '
 <div class="background">
 <div class="seiteninhalt">';
+if($logout == "true")
+{
+    session_destroy();
+    echo '<meta http-equiv="refresh" content="0; URL='.$domain.'login.php">';
+    exit();
+}
 
 //Passwort wird gepürft und bei richtiger Eingabe wird der nuter angemeldet
 if(empty($reset_passwort) && empty($reset_pw_key) && empty($user) && empty($logout))
@@ -89,57 +94,41 @@ if(empty($reset_passwort) && empty($reset_pw_key) && empty($user) && empty($logo
         //Daten aus der Datenbank werden geladen und in eigene Variablen geschrieben    
             $daten = $ergebnis->fetch_array(); 
             $ID = $daten[0];
-            $Nachname = $daten[1];
-            $Vorname = $daten[2];
-            $Kuerzel = $daten[3];
+            $Vorname = $daten[1];
+            $Nachname = $daten[2];
             $EMail = $daten[4];
             $Passwort = $daten[5];
-            $Administrator = $daten[6];
-            $Tutor = $daten[7];
-            $Schulleitung = $daten[10];
+            $Name = $Vorname ." ".$Nachname;
+            
         if(password_verify($Passwort_login, $Passwort))
         {
-                      //Gloable Variablen für die Authentifizierung und Daten setzen.
-                      $_SESSION ["user_logged_in"] = random_String();
-                      $_SESSION["ID"] = $ID;
-                      $_SESSION["Nachname"] = $Nachname;
-                      $_SESSION["Vorname"] = $Vorname;
-                      $_SESSION["Kuerzel"] = $Kuerzel;
-                      $_SESSION["EMail"] = $EMail;
-                      $_SESSION["Passwort"] = $Passwort;
-                      $_SESSION["Administrator"] = $Administrator;
-                      $_SESSION["Tutor"] = $Tutor;
-                      $_SESSION["SL"] = $Schulleitung;
-                      $_SESSION["Name_voll"] = $_SESSION["Vorname"] ." ". $_SESSION["Nachname"];
-          
-                      //E-Mail mit Login bestätigung senden
-                      $mail->addAddress($_SESSION["EMail"], $_SESSION["Name_voll"]);
-                          $mail->isHTML();
-                          $mail->Subject = 'Neue Anmeldung an Ihrem Account!';
-                          $mail->Body    = 'Sie haben sich soeben an Ihrem Compass - BWS Account angemldet. Wenn Sie das nicht waren, ändern Sie umgehen Ihr Passwort und wenden Sie sich an ticket.bws-hofheim.de';
-                              if(!$mail->Send()) {
-                                  $_SESSION["Fehler_EMAIL_Senden"] = '"Mailer Error: " '. $mail->ErrorInfo.'';
-                              }
+            //Gloable Variablen für die Authentifizierung und Daten setzen.
+            $_SESSION ["user_logged_in"] = random_String();
+            $_SESSION["ID"] = $ID;
 
-                        //IP-Adresse des Nutzers auslese
-                        $user_ip = $_SERVER['REMOTE_ADDR'];
-                
-                        //Anmeldung wird in der DB gespeichert
-                        $Anfrage = "INSERT INTO log_all(IP_ADDR, action_log, User, Datum, Userdevice) 
+            //E-mail senden
+            $Betreff = 'Neue Anmeldung an Ihrem Account!';
+            $Inhalt =  'Sie haben sich soeben an Ihrem Compass - BWS Account angemldet. Wenn Sie das nicht waren, ändern Sie umgehen Ihr Passwort und wenden Sie sich an ticket.bws-hofheim.de';
+            sendEmail($EMail, $Name, $Betreff, $Inhalt);
+          
+            //Anmeldung wird in der DB gespeichert
+            $Anfrage = "INSERT INTO log_all(IP_ADDR, action_log, User, Datum, Userdevice) 
                                     VALUES ( '$user_ip', 'Nutzer angemeldet', '{$_SESSION["ID"]}', '$uhrzeit', '$infos_user')";
                                                 
-                        $db_link->query($Anfrage);
+            $db_link->query($Anfrage);
           
-                          //Redirect zur vorherigen Seite
-                          if(isset($_SESSION["redirect"]))
-                          {
-                              echo '<meta http-equiv="refresh" content="0; URL='.$domain.$_SESSION["redirect"].'">';
-                              unset($_SESSION["redirect"]);
-                          }
-                          else 
-                          {
-                              echo '<meta http-equiv="refresh" content="0; URL='.$domain.'lehrende">';
-                          }
+            //Redirect zur vorherigen Seite
+            if(!empty($_SESSION["redirect"]))
+            {
+                echo '<meta http-equiv="refresh" content="0; URL='.$domain.$_SESSION["redirect"].'">';
+                unset ($_SESSION["redirect"]);
+                exit();
+            }
+            else 
+            {
+                echo '<meta http-equiv="refresh" content="0; URL='.$domain.'lehrende">';
+                exit();
+            }
   
         }
         else
@@ -181,6 +170,7 @@ if(empty($logout))
     if(isset($_SESSION ["user_logged_in"])){
         if(isset($_SESSION["redirect"])){
             header('Location:'.$_SESSION["redirect"].'');
+            unset ($_SESSION["redirect"]);
         }
         else{
             header('Location:'.$domain.'lehrende');
@@ -247,7 +237,7 @@ if($reset_passwort == "true")
 
             //Schreibt den genrierten Link in Datenbank und die Uhrzeit zum Ablauf des Linkes in die Datenbank
             $Anfrage = "UPDATE lehrende
-                        SET link_reset_passwort = '$reset_key', timer_pw = '$uhrzeit'
+                        SET link_reset_passwort = '$reset_key', timer_pw = '$timestamp'
                         WHERE ID = '$ID'";
             $ergebnis = $db_link->query($Anfrage); //SQL Abfrage wird an die Datenbank übergeben 
 
@@ -262,18 +252,11 @@ if($reset_passwort == "true")
                 //Link zum Zurücksetzen bauen
                 $Link_reset = $domain. "login.php?reset_pw_key=" .$reset_key. "&user=" .$ID;
 
-
-                //EMail zum zurücksetzen bauen
-                $mail->addAddress($EMail, $Name);
-                $mail->isHTML();
-                $mail->Subject = 'Passwort zurücksetzen';
-                $mail->Body    = 'Sie haben soeben das zurücksetzen Ihres Passwortes angefordert. Bitte klicken Sie auf diesen Link um Ihr Passwort neu zu setzen. </br> '. $Link_reset.'';
-                    if(!$mail->Send()) 
-                    {
-                        $_SESSION["Fehler_EMAIL_Senden"] = '"Mailer Error: " '. $mail->ErrorInfo.'';
-                        echo $_SESSION["Fehler_EMAIL_Senden"];
-                    }
-
+                    $Betreff = "Passort zurücksetzen, function";
+                    $Inhalt = 'Sie haben soeben das zurücksetzen Ihres Passwortes angefordert. Bitte klicken Sie auf diesen Link um Ihr Passwort neu zu setzen. </br> '. $Link_reset.'';
+                    
+                    //Email zum zurücksetzen bauen
+                    sendEmail($EMail, $Name, $Betreff, $Inhalt);
 
                     //IP-Adresse des Nutzers auslese
                     $user_ip = $_SERVER['REMOTE_ADDR'];
@@ -319,38 +302,41 @@ if($reset_passwort == "true")
             $daten = $ergebnis->fetch_array(); 
             $email = $daten[0];
             $link_reset_passwort = $daten[1];
-            $timer_pw = $daten[2];
+            $timer_pw = $daten[2]; //kommt als int aus der DB (UNIX-Zeitstempel)
 
-            //Datum wird zu UNIX Stempel umgewandelt 
-            $timer_pw = strtotime($timer_pw); 
-            //Auf das Datum werden 30 Minuten gerechnet -> dauer des Links 
-            $timer_pw = strtotime('+30 minutes', $timer_pw);  
-            $aktuelles_DatumUhrzeit = strtotime($uhrzeit);
-
-            //unterschied wird berechnet, Wert wird negativ wenn über 30 min
-            $unterschied = $timer_pw - $aktuelles_DatumUhrzeit;
-
-            if($unterschied > 0)
+            if($link_reset_passwort != "0")
             {
-                //Prüfung ob der aus der E-Mail übergeben key dem key aus der DB entspricht
-                if($link_reset_passwort == $reset_pw_key)
+
+                //unterschied wird berechnet, Wert wird negativ wenn über 30 min
+                $timer_pw = $timer_pw + 1800;
+                $unterschied = $timestamp - $timer_pw;
+
+                if($unterschied <= 30)
                 {
-                    echo '<p> Bitte geben Sie Ihr neues Passwort ein und bestätigen Sie die Änderung.';
-                    echo '<form method="POST" class="login_form">
-                    <label> Neues Passwort:</label>  </br>
-                    <input class="status_input" type="password" name="passwort_reset_1" required> </br>
-                    <label> Bitte geben Sie Ihr Passwort erneut ein: </label> </br>
-                    <input class="status_input" type="password" name="passwort_reset_2" required> </br>
-                    <button class="status_button" type="submit">Passwort zurücksetzen</button>
-            
-                    </form>';
+                    //Prüfung ob der aus der E-Mail übergeben key dem key aus der DB entspricht
+                    if($link_reset_passwort == $reset_pw_key)
+                    {
+                        echo '<p> Bitte geben Sie Ihr neues Passwort ein und bestätigen Sie die Änderung.';
+                        echo '<form method="POST" class="login_form">
+                        <label> Neues Passwort:</label>  </br>
+                        <input class="status_input" type="password" name="passwort_reset_1" required> </br>
+                        <label> Bitte geben Sie Ihr Passwort erneut ein: </label> </br>
+                        <input class="status_input" type="password" name="passwort_reset_2" required> </br>
+                        <button class="status_button" type="submit">Passwort zurücksetzen</button>
+                
+                        </form>';
+                    }
+                    else{
+                        echo'<div class ="status_fehler"> <p>Ihr Link ist ungültig, bitte probieren Sie es erneut oder wenden Sie sich an ticket.bws-hofheim.de</p> </div>';
+                    }
                 }
                 else{
-                    echo'<div class ="status_fehler"> <p>Ihr Link ist ungültig, bitte probieren Sie es erneut oder wenden Sie sich an ticket.bws-hofheim.de</p> </div>';
+                    echo'<div class ="status_fehler"> <p>Ihr Link ist abgelaufen, bitte probieren Sie es erneut. Die Links sind nur 30 Minuten gültig.</p> </div>';
                 }
             }
-            else{
-                echo'<div class ="status_fehler"> <p>Ihr Link ist abgelaufen, bitte probieren Sie es erneut. Die Links sind nur 30 Minuten gültig.</p> </div>';
+            else
+            {
+                echo'<div class ="status_fehler"> <p>Ihr Link ist ungültig, bitte probieren Sie es erneut. Die Links sind nur 30 Minuten gültig.</p> </div>';
             }
         }
 
@@ -396,19 +382,10 @@ if($reset_passwort == "true")
             
                         if(empty($_SESSION["Fehler_ID"]))
                         {
+                            sendEmail($email, "Tutor", "Passwort erfolgreich zurückgesetzt", "Sie haben soeben Ihr Passwortes zurückgesetzt. Wenn Sie das nicht waren, melden Sie sich sofort unter ticket.bws-hofheim.de und ändern Sie Ihr Passwort erneut.");
 
-                            //EMail zur bestätigen der PW änderung schicken
-                            $mail->addAddress($email);
-                            $mail->isHTML();
-                            $mail->Subject = 'Passwort erfolgreich zurückgesetzt';
-                            $mail->Body    = 'Sie haben soeben Ihr Passwortes zurückgesetzt.  </br>';
-                                if(!$mail->Send()) 
-                                {
-                                    $_SESSION["Fehler_EMAIL_Senden"] = '"Mailer Error: " '. $mail->ErrorInfo.'';
-                                    echo $_SESSION["Fehler_EMAIL_Senden"];
-                                }
-                                $_SESSION["Info_login.php"] = '<div class="status_success"><p>Sie haben Ihr Passwort erfolgreich gesetzt. Sie können sich nun mit Ihrem neuen Passwort anmelden.</p></div>';
-                                echo '<meta http-equiv="refresh" content="0; URL='.$domain.'login.php">';
+                            $_SESSION["Info_login.php"] = '<div class="status_success"><p>Sie haben Ihr Passwort erfolgreich gesetzt. Sie können sich nun mit Ihrem neuen Passwort anmelden.</p></div>';
+                            echo '<meta http-equiv="refresh" content="0; URL='.$domain.'login.php">';
                         }
 
                     }
@@ -429,13 +406,10 @@ if($reset_passwort == "true")
         }
     }
 
-    if($logout == "true")
-    {
-        session_destroy();
-        echo '<meta http-equiv="refresh" content="0; URL='.$domain.'login.php">';
-    }
 
 ?>
 </div>
 </div>
 </div>
+<?php
+include ("includes/footer.php");
